@@ -1,777 +1,247 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ambilor.Lab — Automatización contable y financiera</title>
-<meta name="description" content="Herramientas de automatización para contadores, equipos financieros y PyMEs. Google Sheets, Apps Script y BI aplicados a procesos reales." />
+
 <style>
-:root {
-    --azul:      #1F5C99;
-    --azul-dark: #163f6b;
-    --azul-bg:   #EBF2FA;
-    --negro:     #111111;
-    --gris-1:    #444444;
-    --gris-2:    #888888;
-    --gris-3:    #CCCCCC;
-    --gris-4:    #F4F4F4;
-    --blanco:    #FFFFFF;
-    --borde:     #E2E2E2;
-    --max:       660px;
-    --mono:      ui-monospace, Menlo, Consolas, monospace;
-    --sans:      -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+.w{background:#ffffff;border-radius:12px;overflow:hidden;height:520px;position:relative;font-family:'Inter',sans-serif;border:1px solid #e8e8e8}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+.scene{position:absolute;inset:0 0 48px 0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:40px 48px;opacity:0;pointer-events:none;transition:opacity .15s}
+.scene.active{opacity:1;pointer-events:auto}
 
-  html { scroll-behavior: smooth; }
+/* animated children */
+.scene.active .anim{animation:up .55s cubic-bezier(.16,1,.3,1) both}
+.scene.active .anim:nth-child(1){animation-delay:.05s}
+.scene.active .anim:nth-child(2){animation-delay:.12s}
+.scene.active .anim:nth-child(3){animation-delay:.19s}
+.scene.active .anim:nth-child(4){animation-delay:.26s}
+.scene.active .anim:nth-child(5){animation-delay:.33s}
+.scene.active .anim:nth-child(6){animation-delay:.40s}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
-  body {
-    font-family: var(--sans);
-    font-size: 15px;
-    line-height: 1.65;
-    color: var(--negro);
-    background: var(--blanco);
-    -webkit-font-smoothing: antialiased;
-  }
+.step-pill{display:inline-flex;align-items:center;gap:6px;background:#f0f4ff;border-radius:100px;padding:4px 12px 4px 4px;margin-bottom:18px}
+.step-dot{width:20px;height:20px;border-radius:50%;background:#1F5C99;color:#fff;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.step-txt{font-size:12px;font-weight:500;color:#1F5C99;letter-spacing:.01em}
 
-  /* ── NAV ── */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: var(--blanco);
-    border-bottom: 1px solid var(--borde);
-  }
-  .nav-inner {
-    max-width: var(--max);
-    margin: 0 auto;
-    padding: 0 1.5rem;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .nav-logo {
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--azul);
-    text-decoration: none;
-    letter-spacing: -0.3px;
-  }
-  .nav-links {
-    display: flex;
-    gap: 1.75rem;
-    list-style: none;
-  }
-  .nav-links a {
-    font-size: 13px;
-    color: var(--gris-1);
-    text-decoration: none;
-    transition: color .15s;
-  }
-  .nav-links a:hover,
-  .nav-links a.active { color: var(--azul); }
+.sh{font-size:30px;font-weight:600;color:#0a0a0a;line-height:1.2;letter-spacing:-.03em;margin-bottom:10px}
+.sh em{font-style:normal;color:#1F5C99}
+.ss{font-size:14px;color:#666;line-height:1.65;max-width:440px;margin-bottom:24px;font-weight:400}
 
-  /* ── SECTIONS ── */
-  section { display: none; }
-  section.visible { display: block; }
+/* stats */
+.stats{display:flex;gap:0}
+.stat{padding:16px 24px;border:1px solid #ebebeb;position:relative}
+.stat+.stat{border-left:none}
+.stat:first-child{border-radius:8px 0 0 8px}
+.stat:last-child{border-radius:0 8px 8px 0}
+.stat-n{font-size:32px;font-weight:600;color:#0a0a0a;letter-spacing:-.04em;line-height:1;display:block;margin-bottom:4px}
+.stat-l{font-size:11px;color:#999;font-weight:400;letter-spacing:.02em}
 
-  .container {
-    max-width: var(--max);
-    margin: 0 auto;
-    padding: 3.5rem 1.5rem;
-  }
+/* table */
+.tbl-wrap{width:100%;max-width:500px;border:1px solid #ebebeb;border-radius:8px;overflow:hidden}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:#fafafa;color:#999;padding:8px 12px;text-align:left;font-weight:500;letter-spacing:.04em;font-size:11px;border-bottom:1px solid #ebebeb}
+.tbl td{padding:8px 12px;border-bottom:1px solid #f3f3f3;color:#444;font-variant-numeric:tabular-nums}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr.a td{background:#f0f8ff;color:#0a0a0a;font-weight:500}
+.tbl tr.b td{background:#f0fff7;color:#0a0a0a;font-weight:500}
 
-  /* ── HOME ── */
-  .home-eyebrow {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--azul);
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    margin-bottom: .75rem;
-  }
-  .home-h1 {
-    font-size: 26px;
-    font-weight: 600;
-    line-height: 1.25;
-    color: var(--negro);
-    margin-bottom: 1rem;
-    letter-spacing: -.4px;
-  }
-  .home-lead {
-    font-size: 15px;
-    color: var(--gris-1);
-    max-width: 520px;
-    margin-bottom: 2.5rem;
-    line-height: 1.7;
-  }
+/* steps grid */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:500px;width:100%}
+.sitem{border:1px solid #ebebeb;border-radius:8px;padding:14px 16px;position:relative;overflow:hidden}
+.sitem::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:#1F5C99}
+.sn{font-size:11px;font-weight:600;color:#1F5C99;letter-spacing:.06em;margin-bottom:4px;display:block}
+.st{font-size:12px;color:#555;line-height:1.5}
 
-  .specs-block {
-    border: 1px solid var(--borde);
-    border-radius: 6px;
-    overflow: hidden;
-    margin-bottom: 2.5rem;
-  }
-  .specs-block table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .specs-block th {
-    text-align: left;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--gris-2);
-    background: var(--gris-4);
-    padding: 8px 14px;
-    border-bottom: 1px solid var(--borde);
-  }
-  .specs-block td {
-    padding: 9px 14px;
-    border-bottom: 1px solid var(--borde);
-    vertical-align: top;
-  }
-  .specs-block tr:last-child td { border-bottom: none; }
-  .specs-block td:first-child {
-    color: var(--gris-1);
-    width: 44%;
-  }
-  .specs-block td:last-child {
-    color: var(--negro);
-    font-weight: 500;
-  }
-  .tag {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 11px;
-    background: var(--azul-bg);
-    color: var(--azul);
-    padding: 2px 8px;
-    border-radius: 3px;
-    font-weight: 500;
-  }
+/* result */
+.res-wrap{width:100%;max-width:500px;border:1px solid #ebebeb;border-radius:8px;overflow:hidden}
+.res{width:100%;border-collapse:collapse;font-size:12px}
+.res th{background:#fafafa;color:#999;padding:7px 11px;text-align:left;font-weight:500;letter-spacing:.04em;font-size:11px;border-bottom:1px solid #ebebeb}
+.res td{padding:7px 11px;border-bottom:1px solid #f3f3f3;color:#444;font-variant-numeric:tabular-nums}
+.res tr:last-child td{border-bottom:none}
+.res tr.rc td{background:#f0fff7}
+.res tr.rp td{background:#fffbf0}
+.ok{display:inline-flex;align-items:center;gap:4px;color:#16a34a;font-weight:500;font-size:11px}
+.ok::before{content:'';width:6px;height:6px;border-radius:50%;background:#16a34a;flex-shrink:0}
+.pend{display:inline-flex;align-items:center;gap:4px;color:#d97706;font-weight:500;font-size:11px}
+.pend::before{content:'';width:6px;height:6px;border-radius:50%;background:#d97706;flex-shrink:0}
 
-  .home-areas {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 2.5rem;
-  }
-  .area-card {
-    border: 1px solid var(--borde);
-    border-radius: 6px;
-    padding: 1rem 1.1rem;
-  }
-  .area-card-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--azul);
-    margin-bottom: .3rem;
-  }
-  .area-card p {
-    font-size: 13px;
-    color: var(--gris-1);
-    line-height: 1.5;
-  }
+/* menu */
+.menu{border:1px solid #ebebeb;border-radius:8px;overflow:hidden;width:260px}
+.mi{padding:10px 16px;font-size:13px;color:#888;border-bottom:1px solid #f3f3f3;display:flex;align-items:center;gap:10px}
+.mi:last-child{border-bottom:none}
+.mi.on{color:#1F5C99;background:#f0f4ff;font-weight:500}
+.mi-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.5}
+.mi.on .mi-dot{opacity:1}
 
-  .cta-home {
-    display: inline-block;
-    background: var(--azul);
-    color: var(--blanco);
-    font-size: 13px;
-    font-weight: 500;
-    padding: 10px 22px;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background .15s;
-    cursor: pointer;
-    border: none;
-  }
-  .cta-home:hover { background: var(--azul-dark); }
+/* right side decoration */
+.deco{position:absolute;right:0;top:0;bottom:48px;width:200px;pointer-events:none;overflow:hidden}
+.deco-line{position:absolute;right:40px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent 0%,#ebebeb 20%,#ebebeb 80%,transparent 100%)}
+.deco-num{position:absolute;right:52px;font-size:120px;font-weight:700;color:#f5f5f5;letter-spacing:-.05em;line-height:1;bottom:24px}
 
-  /* ── SOBRE MÍ ── */
-  .about-name {
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: -.3px;
-    margin-bottom: .35rem;
-  }
-  .about-role {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--azul);
-    font-weight: 500;
-    margin-bottom: 1.5rem;
-  }
-  .about-bio {
-    font-size: 14px;
-    color: var(--gris-1);
-    line-height: 1.75;
-    margin-bottom: 2rem;
-    max-width: 540px;
-  }
-  .stack-title {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--gris-2);
-    margin-bottom: .75rem;
-  }
-  .stack-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 2rem;
-  }
-  .stack-pill {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 500;
-    padding: 4px 10px;
-    border: 1px solid var(--borde);
-    border-radius: 4px;
-    color: var(--gris-1);
-    background: var(--gris-4);
-  }
-  .divider {
-    border: none;
-    border-top: 1px solid var(--borde);
-    margin: 2rem 0;
-  }
-  .exp-item { margin-bottom: 1.25rem; }
-  .exp-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: .2rem;
-  }
-  .exp-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--negro);
-  }
-  .exp-date {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--gris-2);
-  }
-  .exp-org {
-    font-size: 13px;
-    color: var(--azul);
-    margin-bottom: .2rem;
-  }
-  .exp-desc {
-    font-size: 13px;
-    color: var(--gris-1);
-    line-height: 1.6;
-  }
+/* progress */
+.prog{position:absolute;bottom:48px;left:0;height:2px;background:#1F5C99;width:0;z-index:10;border-radius:0 2px 2px 0}
 
-  /* ── PRODUCTO ── */
-  .prod-eyebrow {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--azul);
-    margin-bottom: .6rem;
-  }
-  .prod-h1 {
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: -.3px;
-    margin-bottom: .5rem;
-    line-height: 1.3;
-  }
-  .prod-tagline {
-    font-size: 14px;
-    color: var(--gris-1);
-    margin-bottom: 2rem;
-    line-height: 1.65;
-    max-width: 500px;
-  }
-
-  .price-row {
-    display: flex;
-    align-items: baseline;
-    gap: .5rem;
-    margin-bottom: 1.25rem;
-  }
-  .price-num {
-    font-size: 30px;
-    font-weight: 600;
-    font-family: var(--mono);
-    color: var(--negro);
-    letter-spacing: -1px;
-  }
-  .price-label {
-    font-size: 13px;
-    color: var(--gris-2);
-  }
-
-  .buy-btn {
-    display: inline-block;
-    background: var(--azul);
-    color: var(--blanco);
-    font-size: 14px;
-    font-weight: 500;
-    padding: 11px 28px;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background .15s;
-    margin-bottom: .6rem;
-  }
-  .buy-btn:hover { background: var(--azul-dark); }
-  .guarantee-note {
-    font-size: 12px;
-    color: var(--gris-2);
-    display: block;
-    margin-bottom: 2.5rem;
-  }
-
-  .section-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--gris-2);
-    margin-bottom: .75rem;
-    margin-top: 2rem;
-  }
-  .section-label:first-of-type { margin-top: 0; }
-
-  .includes-list {
-    list-style: none;
-    border: 1px solid var(--borde);
-    border-radius: 6px;
-    overflow: hidden;
-    margin-bottom: 2rem;
-    font-size: 13px;
-  }
-  .includes-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 9px 14px;
-    border-bottom: 1px solid var(--borde);
-    color: var(--negro);
-  }
-  .includes-list li:last-child { border-bottom: none; }
-  .includes-list li span { color: var(--gris-2); font-size: 12px; font-family: var(--mono); }
-
-  .flow-steps {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 2rem;
-  }
-  .flow-step {
-    border: 1px solid var(--borde);
-    border-radius: 6px;
-    padding: .85rem .75rem;
-    text-align: center;
-  }
-  .flow-step-num {
-    font-family: var(--mono);
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--azul);
-    display: block;
-    margin-bottom: .3rem;
-  }
-  .flow-step p { font-size: 12px; color: var(--gris-1); line-height: 1.45; }
-
-  .faq-list { margin-bottom: 2rem; }
-  .faq-item { padding: 1rem 0; border-bottom: 1px solid var(--borde); }
-  .faq-item:last-child { border-bottom: none; }
-  .faq-q { font-size: 13px; font-weight: 500; color: var(--negro); margin-bottom: .3rem; }
-  .faq-a { font-size: 13px; color: var(--gris-1); line-height: 1.6; }
-
-  .alert-box {
-    border-left: 3px solid var(--azul);
-    background: var(--azul-bg);
-    padding: .85rem 1rem;
-    border-radius: 0 5px 5px 0;
-    font-size: 13px;
-    color: var(--azul-dark);
-    margin-bottom: 2rem;
-    line-height: 1.6;
-  }
-
-  /* ── CONTACTO ── */
-  .contact-intro {
-    font-size: 14px;
-    color: var(--gris-1);
-    margin-bottom: 2rem;
-    line-height: 1.7;
-    max-width: 460px;
-  }
-  .contact-block {
-    border: 1px solid var(--borde);
-    border-radius: 6px;
-    overflow: hidden;
-    font-size: 13px;
-    margin-bottom: 2rem;
-  }
-  .contact-row {
-    display: flex;
-    align-items: center;
-    padding: 11px 14px;
-    border-bottom: 1px solid var(--borde);
-    gap: 12px;
-  }
-  .contact-row:last-child { border-bottom: none; }
-  .contact-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    color: var(--gris-2);
-    width: 80px;
-    flex-shrink: 0;
-  }
-  .contact-val {
-    color: var(--negro);
-  }
-  .contact-val a {
-    color: var(--azul);
-    text-decoration: none;
-  }
-  .contact-val a:hover { text-decoration: underline; }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--borde);
-    padding: 1.5rem;
-    text-align: center;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--gris-2);
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 520px) {
-    .home-areas { grid-template-columns: 1fr; }
-    .flow-steps  { grid-template-columns: 1fr 1fr; }
-    .home-h1     { font-size: 22px; }
-    .prod-h1     { font-size: 20px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-  }
+/* controls */
+.ctrl{position:absolute;bottom:0;left:0;right:0;height:48px;border-top:1px solid #ebebeb;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#fff}
+.ctrl-left{display:flex;align-items:center;gap:8px}
+.cbtn{background:none;border:1px solid #e0e0e0;color:#999;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.cbtn:hover{border-color:#1F5C99;color:#1F5C99}
+.cdots{display:flex;gap:5px;align-items:center}
+.cdot{width:5px;height:5px;border-radius:50%;background:#e0e0e0;cursor:pointer;transition:all .25s}
+.cdot.on{background:#1F5C99;width:18px;border-radius:3px}
+.ctr{font-size:11px;color:#bbb;font-weight:400;letter-spacing:.03em}
+.ctrl-right{font-size:11px;color:#bbb}
 </style>
-</head>
-<body>
 
-<nav>
-  <div class="nav-inner">
-    <a class="nav-logo" href="#" onclick="show('home')">Ambilor.Lab</a>
-    <ul class="nav-links">
-      <li><a href="#" onclick="show('home')"    id="nav-home">Inicio</a></li>
-      <li><a href="#" onclick="show('about')"   id="nav-about">Sobre mí</a></li>
-      <li><a href="#" onclick="show('product')" id="nav-product">Herramientas</a></li>
-      <li><a href="#" onclick="show('contact')" id="nav-contact">Contacto</a></li>
-    </ul>
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">Demo Conciliador V1 — estilo premium</h2>
+
+<div class="w">
+  <div class="deco">
+    <div class="deco-line"></div>
+    <div class="deco-num" id="deco-num">01</div>
   </div>
-</nav>
 
-<!-- ══ HOME ══════════════════════════════════════════════════════════════ -->
-<section id="home" class="visible">
-  <div class="container">
-    <div class="home-eyebrow">Automatización contable · Santiago, Chile</div>
-    <h1 class="home-h1">Procesos financieros que<br/>funcionan solos.</h1>
-    <p class="home-lead">
-      Construyo herramientas de automatización para contadores, equipos financieros y administradores de PyMEs — usando las plataformas que ya tienes: Google Sheets, Apps Script y Power BI.
-    </p>
+  <div class="scene active" id="s0">
+    <div class="step-pill anim"><div class="step-dot">!</div><span class="step-txt">El problema que resuelve</span></div>
+    <div class="sh anim">Cruzas movimientos<br>a mano. <em>Cada mes.</em></div>
+    <div class="ss anim">Facturas contra pagos. Cartola contra contabilidad. Fila por fila, todos los meses. Horas de trabajo manual con riesgo de error.</div>
+    <div class="stats anim">
+      <div class="stat"><span class="stat-n">200</span><div class="stat-l">movimientos típicos</div></div>
+      <div class="stat"><span class="stat-n">3h</span><div class="stat-l">tiempo manual promedio</div></div>
+      <div class="stat"><span class="stat-n">&#8734;</span><div class="stat-l">riesgo de error</div></div>
+    </div>
+  </div>
 
-    <div class="specs-block">
-      <table>
-        <thead>
-          <tr><th>Área</th><th>Tecnología</th></tr>
-        </thead>
+  <div class="scene" id="s1">
+    <div class="step-pill anim"><div class="step-dot">1</div><span class="step-txt">Paso 1 — carga tus datos</span></div>
+    <div class="sh anim">Pegas tus movimientos<br>en la hoja <em>MOVIMIENTOS</em></div>
+    <div class="ss anim">Cualquier estructura. Los nombres de columnas se configuran sin tocar código — desde la propia planilla.</div>
+    <div class="tbl-wrap anim">
+      <table class="tbl">
+        <thead><tr><th>ID</th><th>Concepto</th><th>Responsable</th><th>Monto</th></tr></thead>
         <tbody>
-          <tr><td>Conciliación bancaria</td><td><span class="tag">Google Sheets + Apps Script</span></td></tr>
-          <tr><td>Business Intelligence</td><td><span class="tag">Looker Studio · Power BI</span></td></tr>
-          <tr><td>Automatización de procesos</td><td><span class="tag">Python · SQL · n8n</span></td></tr>
-          <tr><td>Formación</td><td><span class="tag">Analista de Datos — AIEP</span></td></tr>
+          <tr class="a"><td>F-001</td><td>Factura A</td><td>Proveedor X</td><td>+500.000</td></tr>
+          <tr><td>F-002</td><td>Honorario B</td><td>Proveedor Y</td><td>+120.000</td></tr>
+          <tr class="b"><td>P-001</td><td>Pago fact A</td><td>Proveedor X</td><td>-500.000</td></tr>
+          <tr><td>P-002</td><td>Abono hon B</td><td>Proveedor Y</td><td>-120.000</td></tr>
         </tbody>
       </table>
     </div>
-
-    <div class="home-areas">
-      <div class="area-card">
-        <div class="area-card-label">Para contadores</div>
-        <p>Herramientas que reducen el trabajo manual sin depender de software externo.</p>
-      </div>
-      <div class="area-card">
-        <div class="area-card-label">Para PyMEs</div>
-        <p>Automatizaciones sobre plataformas que ya usas — sin suscripciones adicionales.</p>
-      </div>
-      <div class="area-card">
-        <div class="area-card-label">Para equipos financieros</div>
-        <p>Dashboards, conciliaciones y reglas de negocio implementadas directamente en tus datos.</p>
-      </div>
-      <div class="area-card">
-        <div class="area-card-label">Productos digitales</div>
-        <p>Scripts y plantillas listas para instalar, documentadas y con soporte directo del autor.</p>
-      </div>
-    </div>
-
-    <button class="cta-home" onclick="show('product')">Ver herramientas disponibles →</button>
   </div>
-</section>
 
-<!-- ══ SOBRE MÍ ══════════════════════════════════════════════════════════ -->
-<section id="about">
-  <div class="container">
-    <div class="about-name">Jordan.R.</div>
-    <div class="about-role">Contador Público y Auditor · Analista de Datos</div>
-    <p class="about-bio">
-      Me especializo en construir automatizaciones que eliminan trabajo manual repetitivo en procesos financieros — usando herramientas accesibles para cualquier equipo contable.
-    </p>
-    <p class="about-bio" style="margin-top:-1rem">
-      Cada herramienta que publico la construí primero para resolver un problema real. El Conciliador Automático V1 nació de meses cruzando movimientos manualmente y decidir que no tenía sentido seguir haciéndolo así.
-    </p>
-
-    <div class="stack-title">Stack técnico</div>
-    <div class="stack-grid">
-      <span class="stack-pill">SQL</span>
-      <span class="stack-pill">Python</span>
-      <span class="stack-pill">Google Apps Script</span>
-      <span class="stack-pill">Looker Studio</span>
-      <span class="stack-pill">Power BI</span>
-      <span class="stack-pill">Microsoft Dynamics</span>
-      <span class="stack-pill">Bantotal</span>
-      <span class="stack-pill">n8n</span>
-    </div>
-
-    <hr class="divider"/>
-
-    <div class="stack-title">Experiencia</div>
-
-    <div class="exp-item">
-      <div class="exp-head">
-        <div class="exp-title">Analista de Control Contable y Datos</div>
-        <div class="exp-date">2023 — presente</div>
-      </div>
-      <div class="exp-org">Forum Servicios Financieros · Santiago, Chile</div>
-      <div class="exp-desc">Analista y Control Contable:
-          *Análisis y validación de grandes volúmenes de datos financieros.
-          * Desarrollo de dashboards para monitoreo y control operativo.
-          * Automatización de procesos mediante SQL, Python y Google Apps Script.
-         * Desarrollo de conciliador semiautomático de partidas contables.
-         * Validación de consistencia de datos entre sistemas financieros (Bantotal y Dynamics).
-         * Optimización de flujos de requerimientos de pago en ERP.
-         * Implementación de formularios automatizados y notificaciones para seguimiento de procesos.
-         * Participación en proyectos de mejora continua, control operativo y transformación de procesos..</div>
-    </div>
-
-    <hr class="divider"/>
-
-    <div class="stack-title">Formación</div>
-    <div class="exp-item">
-      <div class="exp-head">
-        <div class="exp-title">Analista de Datos</div>
-        <div class="exp-date">En curso</div>
-      </div>
-      <div class="exp-org">AIEP</div>
-    </div>
-    <div class="exp-item">
-      <div class="exp-head">
-        <div class="exp-title">Contador Público y Auditor</div>
-        <div class="exp-date"></div>
-      </div>
-      <div class="exp-org">Usach</div>
+  <div class="scene" id="s2">
+    <div class="step-pill anim"><div class="step-dot">2</div><span class="step-txt">Paso 2 — ejecutar</span></div>
+    <div class="sh anim">Un clic desde<br>el menú de tu <em>planilla</em></div>
+    <div class="ss anim">El sistema valida que los datos estén correctos antes de procesar. Si hay errores te los reporta con detalle.</div>
+    <div class="menu anim">
+      <div class="mi"><div class="mi-dot"></div>Conciliacion</div>
+      <div class="mi"><div class="mi-dot"></div>Validar datos</div>
+      <div class="mi on"><div class="mi-dot"></div>Ejecutar conciliacion</div>
+      <div class="mi"><div class="mi-dot"></div>Limpiar resultados</div>
     </div>
   </div>
-</section>
 
-<!-- ══ HERRAMIENTAS / PRODUCTO ══════════════════════════════════════════ -->
-<section id="product">
-  <div class="container">
-    <div class="prod-eyebrow">Herramienta disponible</div>
-    <h1 class="prod-h1">Conciliador Automático V1<br/>para Google Sheets</h1>
-    <p class="prod-tagline">
-      Cruza movimientos bancarios, facturas o registros contables en segundos. Sin código, sin fórmulas complejas — directo desde el menú de tu planilla.
-    </p>
+  <div class="scene" id="s3">
+    <div class="step-pill anim"><div class="step-dot">~</div><span class="step-txt">Algoritmo de matching</span></div>
+    <div class="sh anim">Cruza <em>cada movimiento</em><br>contra todos los demás</div>
+    <div class="ss anim">200 registros procesados en menos de 30 segundos. Configuración completa sin tocar una línea de código.</div>
+    <div class="steps anim">
+      <div class="sitem"><span class="sn">01</span><div class="st">Compara montos con tolerancia configurable</div></div>
+      <div class="sitem"><span class="sn">02</span><div class="st">Verifica responsable y columnas extra</div></div>
+      <div class="sitem"><span class="sn">03</span><div class="st">Calcula similitud de concepto — score 0 a 100</div></div>
+      <div class="sitem"><span class="sn">04</span><div class="st">Elige el mejor par y lo marca como usado</div></div>
+    </div>
+  </div>
 
-    
+  <div class="scene" id="s4">
+    <div class="step-pill anim"><div class="step-dot">3</div><span class="step-txt">Paso 3 — resultado</span></div>
+    <div class="sh anim">La hoja <em>RESULTADO</em><br>lista lo conciliado y pendiente</div>
+    <div class="ss anim">Pares agrupados por color. Pendientes destacados al final. Todo en la misma planilla.</div>
+    <div class="res-wrap anim">
+      <table class="res">
+        <thead><tr><th>Grupo</th><th>Estado</th><th>ID</th><th>Monto</th></tr></thead>
+        <tbody>
+          <tr class="rc"><td>G00001</td><td><span class="ok">Conciliado</span></td><td>F-001</td><td>+500.000</td></tr>
+          <tr class="rc"><td>G00001</td><td><span class="ok">Conciliado</span></td><td>P-001</td><td>-500.000</td></tr>
+          <tr class="rc"><td>G00002</td><td><span class="ok">Conciliado</span></td><td>F-002</td><td>+120.000</td></tr>
+          <tr class="rc"><td>G00002</td><td><span class="ok">Conciliado</span></td><td>P-002</td><td>-120.000</td></tr>
+          <tr class="rp"><td>—</td><td><span class="pend">Pendiente</span></td><td>F-003</td><td>+80.000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-<div class="section-label">Demo interactiva</div>
-<div style="margin-bottom:2rem;border:1px solid #E2E2E2;border-radius:8px;overflow:hidden">
-  <iframe src="demo_premium_conciliador_actualizado.html"
-          style="width:100%;height:560px;border:0;display:block"></iframe>
+  <div class="scene" id="s5">
+    <div class="step-pill anim"><div class="step-dot">✓</div><span class="step-txt">Resultado final</span></div>
+    <div class="sh anim"><em>200 movimientos</em> cruzados<br>en menos de 30 segundos</div>
+    <div class="ss anim">Sin software adicional. Sin Excel. Solo Google Sheets y una cuenta Google. Instalación en 5 minutos. Disponible todos los meses sin costo adicional.</div>
+    <div class="stats anim">
+      <div class="stat"><span class="stat-n">30s</span><div class="stat-l">vs 3 horas manual</div></div>
+      <div class="stat"><span class="stat-n">0</span><div class="stat-l">errores humanos</div></div>
+      <div class="stat"><span class="stat-n">5min</span><div class="stat-l">instalación</div></div>
+    </div>
+  </div>
+
+  <div class="prog" id="prog"></div>
+
+  <div class="ctrl">
+    <div class="ctrl-left">
+      <button class="cbtn" onclick="nav(-1)" aria-label="Anterior">&#8592;</button>
+      <div class="cdots" id="dots"></div>
+      <button class="cbtn" id="ppbtn" onclick="togglePlay()" aria-label="Pausar">&#9646;&#9646;</button>
+      <button class="cbtn" onclick="nav(1)" aria-label="Siguiente">&#8594;</button>
+    </div>
+    <span class="ctr" id="ctr">1 de 6</span>
+  </div>
 </div>
 
-<div class="price-row">
-
-      <span class="price-num">$9.990</span>
-      <span class="price-label">CLP · pago único · sin suscripción</span>
-    </div>
-
-    <a class="buy-btn" href="https://jordana78.gumroad.com/l/gbtemx" target="_blank" rel="noopener noreferrer">
-      Comprar en Gumroad →
-    </a>
-    <span class="guarantee-note">✓ Garantía de devolución de 7 días si no funciona</span>
-
-    <div class="alert-box">
-      Diseñado para contadores, administradores de PyMEs y cualquier persona que cruce movimientos financieros de forma manual todos los meses.
-    </div>
-
-    <div class="section-label">Qué incluye</div>
-    <ul class="includes-list">
-      <li>Planilla base lista para instalar <span>Google Sheets (.xlsx)</span></li>
-      <li>Planilla de ejemplo con datos de prueba <span>Google Sheets (.xlsx)</span></li>
-      <li>Código fuente completo <span>10 archivos .gs documentados</span></li>
-      <li>Manual de usuario <span>PDF · 8 págs.</span></li>
-      <li>Manual técnico <span>PDF · 8 págs.</span></li>
-      <li>Guía de instalación paso a paso <span>PDF · 4 págs.</span></li>
-      <li>Licencia de uso incluida <span>uso personal o una empresa</span></li>
-    </ul>
-
-    <div class="section-label">Cómo funciona</div>
-    <div class="flow-steps">
-      <div class="flow-step">
-        <span class="flow-step-num">01</span>
-        <p>Pegas tus movimientos en la hoja MOVIMIENTOS</p>
-      </div>
-      <div class="flow-step">
-        <span class="flow-step-num">02</span>
-        <p>Configuras las reglas una vez desde la planilla</p>
-      </div>
-      <div class="flow-step">
-        <span class="flow-step-num">03</span>
-        <p>Ejecutas desde el menú "🔄 Conciliación"</p>
-      </div>
-      <div class="flow-step">
-        <span class="flow-step-num">04</span>
-        <p>Ves pares conciliados y pendientes al instante</p>
-      </div>
-    </div>
-
-    <div class="section-label">Especificaciones técnicas</div>
-    <div class="specs-block" style="margin-bottom:2rem">
-      <table>
-        <tbody>
-          <tr><td>Plataforma</td><td>Google Sheets + Apps Script (V8)</td></tr>
-          <tr><td>Tipo de conciliación</td><td>1:1 automática</td></tr>
-          <tr><td>Registros óptimos</td><td>Hasta 200 por ejecución</td></tr>
-          <tr><td>Registros máximos</td><td>~700 antes de timeout</td></tr>
-          <tr><td>Configuración de columnas</td><td>Sin tocar código, desde CONFIG_COLUMNAS</td></tr>
-          <tr><td>Filtros disponibles</td><td>Monto · Responsable · Fecha · Concepto · Extras</td></tr>
-          <tr><td>Tiempo de instalación</td><td>~5 minutos siguiendo la guía incluida</td></tr>
-          <tr><td>Requiere software adicional</td><td>No — solo una cuenta Google</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="section-label">Preguntas frecuentes</div>
-    <div class="faq-list">
-      <div class="faq-item">
-        <div class="faq-q">¿Necesito saber programar para instalarlo?</div>
-        <div class="faq-a">No. La guía de instalación incluida cubre el proceso en 9 pasos desde cero — copiar, pegar y autorizar permisos.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">¿Mis datos bancarios quedan en algún servidor?</div>
-        <div class="faq-a">No. El script corre completamente dentro de tu propia cuenta de Google. No hay ningún servidor externo involucrado — tus datos no salen de tu Drive.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">¿Funciona con cualquier banco o estructura de planilla?</div>
-        <div class="faq-a">Sí. Los nombres de columnas son configurables desde la hoja CONFIG_COLUMNAS sin modificar el código. Sirve para cualquier estructura de movimientos que tengas.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">¿Puedo usarlo en más de una empresa?</div>
-        <div class="faq-a">La licencia incluida cubre uso personal o una sola organización. Para uso en múltiples empresas o clientes, escríbeme directamente para una licencia multiempresa.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">¿Qué pasa si tengo más de 700 registros?</div>
-        <div class="faq-a">Procesa por períodos mensuales. Con menos de 200 registros el resultado es prácticamente inmediato. Con 500, tarda entre 30 segundos y 3 minutos.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">¿Funciona en Excel?</div>
-        <div class="faq-a">No. Está construido sobre Google Apps Script y requiere Google Sheets con una cuenta Google activa.</div>
-      </div>
-    </div>
-
-    <a class="buy-btn" href="https://jordana78.gumroad.com/l/gbtemx" target="_blank" rel="noopener noreferrer">
-      Comprar por $9.990 CLP →
-    </a>
-    <span class="guarantee-note">✓ Pago seguro vía Gumroad · Descarga inmediata</span>
-  </div>
-</section>
-
-<!-- ══ CONTACTO ══════════════════════════════════════════════════════════ -->
-<section id="contact">
-  <div class="container">
-    <div class="home-eyebrow">Contacto</div>
-    <h2 style="font-size:20px;font-weight:600;letter-spacing:-.3px;margin-bottom:.75rem">¿Tienes un proceso que automatizar?</h2>
-    <p class="contact-intro">
-      Si tienes un proceso contable o financiero que te consume tiempo y crees que se puede automatizar, cuéntame. Respondo en menos de 48 horas hábiles.
-    </p>
-    <p class="contact-intro" style="margin-top:-1rem">
-      También puedes escribirme si tienes dudas sobre el Conciliador Automático o quieres una licencia para múltiples empresas.
-    </p>
-
-    <div class="contact-block">
-      <div class="contact-row">
-        <span class="contact-label">Gumroad</span>
-        <span class="contact-val"><a href="https://jordana78.gumroad.com" target="_blank" rel="noopener noreferrer">jordana78.gumroad.com</a></span>
-      </div>
-      <div class="contact-row">
-        <span class="contact-label">Ubicación</span>
-        <span class="contact-val">Santiago, Chile</span>
-      </div>
-      <div class="contact-row">
-        <span class="contact-label">Idioma</span>
-        <span class="contact-val">Español</span>
-      </div>
-    </div>
-
-    <div class="specs-block">
-      <table>
-        <thead><tr><th>Tipo de proyecto</th><th>Descripción</th></tr></thead>
-        <tbody>
-          <tr><td>Conciliaciones</td><td>Automatización de cruce de movimientos financieros</td></tr>
-          <tr><td>Reportería</td><td>Dashboards en Looker Studio o Power BI</td></tr>
-          <tr><td>Automatización</td><td>Flujos en Google Apps Script, Python o n8n</td></tr>
-          <tr><td>Plantillas</td><td>Herramientas personalizadas para tu operación</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<!-- ══ FOOTER ══════════════════════════════════════════════════════════ -->
-<footer>
-  © 2026 Ambilor.Lab · Santiago, Chile · Todos los derechos reservados
-</footer>
-
 <script>
-  function show(id) {
-    document.querySelectorAll('section').forEach(s => s.classList.remove('visible'));
-    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-    document.getElementById(id).classList.add('visible');
-    document.getElementById('nav-' + id).classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    return false;
-  }
-  show('home');
-</script>
+var N=6,cur=0,playing=true,raf=null,pbStart=null,DUR=4800;
+var NUMS=['01','02','03','04','05','06'];
 
-</body>
-</html>
+function goTo(i){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=i;
+  var sc=document.getElementById('s'+cur);
+  sc.classList.add('active');
+  sc.querySelectorAll('.anim').forEach(function(el){
+    el.style.animation='none';
+    el.offsetHeight;
+    el.style.animation='';
+  });
+  document.getElementById('deco-num').textContent=NUMS[i];
+  document.getElementById('ctr').textContent=(i+1)+' de 6';
+  buildDots();
+  if(playing)startBar();
+}
+function nav(d){stopBar();goTo((cur+d+N)%N);}
+function buildDots(){
+  var c=document.getElementById('dots');c.innerHTML='';
+  for(var i=0;i<N;i++){
+    var d=document.createElement('div');
+    d.className='cdot'+(i===cur?' on':'');
+    (function(idx){d.onclick=function(){stopBar();goTo(idx);};})(i);
+    c.appendChild(d);
+  }
+}
+function startBar(){
+  stopBar();pbStart=Date.now();
+  var b=document.getElementById('prog');b.style.width='0%';
+  function tick(){
+    var pct=Math.min(100,(Date.now()-pbStart)/DUR*100);
+    b.style.width=pct+'%';
+    if(pct>=100){raf=null;goTo((cur+1)%N);}
+    else raf=requestAnimationFrame(tick);
+  }
+  raf=requestAnimationFrame(tick);
+}
+function stopBar(){
+  if(raf){cancelAnimationFrame(raf);raf=null;}
+  document.getElementById('prog').style.width='0%';
+}
+function togglePlay(){
+  playing=!playing;
+  var b=document.getElementById('ppbtn');
+  if(playing){b.innerHTML='&#9646;&#9646;';startBar();}
+  else{b.innerHTML='&#9654;';stopBar();}
+}
+buildDots();startBar();
+</script>
