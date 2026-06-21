@@ -84,7 +84,19 @@ section.visible{display:block}
 .contact-val a{color:var(--azul);text-decoration:none}
 .contact-val a:hover{text-decoration:underline}
 footer{border-top:1px solid var(--borde);padding:1.5rem;text-align:center;font-family:var(--mono);font-size:11px;color:var(--gris-2)}
-@media(max-width:520px){.home-areas{grid-template-columns:1fr}.home-h1{font-size:22px}.prod-h1{font-size:20px}.steps-row{flex-wrap:wrap}}
+.v2-teaser{margin-top:3rem;padding-top:2.5rem;border-top:1px dashed var(--borde)}
+.v2-badge{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:var(--azul);color:var(--blanco);padding:5px 12px;border-radius:100px;margin-bottom:1rem}
+.v2-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--blanco);animation:v2blink 1.4s step-end infinite}
+@keyframes v2blink{50%{opacity:.25}}
+.v2-h{font-size:21px;font-weight:600;letter-spacing:-.3px;margin-bottom:.5rem;line-height:1.3}
+.v2-sub{font-size:14px;color:var(--gris-1);line-height:1.65;margin-bottom:1.5rem;max-width:520px}
+.v2-features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.v2-feature{border:1px solid var(--borde);border-radius:6px;padding:.9rem 1rem}
+.v2-feature-label{font-family:var(--mono);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--azul);margin-bottom:.3rem}
+.v2-feature p{font-size:13px;color:var(--gris-1);line-height:1.5}
+.v2-cta-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.v2-cta-text{font-size:13px;color:var(--gris-2)}
+@media(max-width:520px){.v2-features{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 .demo-section{margin-bottom:2.5rem}
 .demo-label{font-family:var(--mono);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--gris-2);margin-bottom:.75rem}
@@ -495,7 +507,23 @@ footer{border-top:1px solid var(--borde);padding:1.5rem;text-align:center;font-f
     </div>
     <a class="buy-btn" href="https://ambilorlab.gumroad.com/l/gbtemx" target="_blank" rel="noopener noreferrer">Comprar por $9.990 CLP</a>
     <span class="guarantee-note">Pago seguro via Gumroad - Descarga inmediata</span>
-  </div>
+
+    <div class="v2-teaser">
+      <div class="v2-badge"><span class="dot"></span>Proximamente</div>
+      <h2 class="v2-h">Conciliador Automatico V2 — ahora con AppWeb</h2>
+      <p class="v2-sub">La siguiente version deja el menu dentro de Google Sheets y pasa a tener su propia aplicacion web conectada a tu planilla. Ya esta en construccion y gran parte del motor esta funcionando — esto es lo que trae:</p>
+      <div class="v2-features">
+        <div class="v2-feature"><div class="v2-feature-label">AppWeb propia</div><p>Se abre como una aplicacion con su propia interfaz, en vez de un menu dentro de la planilla. Lee tu Google Sheets sin modificarlo y guarda los resultados aparte.</p></div>
+        <div class="v2-feature"><div class="v2-feature-label">Conciliacion 1:N y N:1</div><p>Ademas del cruce uno a uno, ahora puede emparejar una factura contra varios pagos parciales, o varios cargos contra un solo pago.</p></div>
+        <div class="v2-feature"><div class="v2-feature-label">Deteccion automatica de columnas</div><p>Reconoce tus columnas por nombre y por contenido, reduciendo la configuracion manual que pedia la V1.</p></div>
+        <div class="v2-feature"><div class="v2-feature-label">Calce manual con deshacer</div><p>Si algo no se empareja solo, lo puedes emparejar tu mismo desde la interfaz — y deshacerlo con un clic si te equivocas.</p></div>
+      </div>
+      <div class="v2-cta-row">
+        <button class="cta-home" onclick="show('contact')">Avisarme cuando este listo</button>
+        <span class="v2-cta-text">Sin fecha de lanzamiento aun — sigo afinando el motor antes de publicarlo.</span>
+      </div>
+    </div>
+    </div>
 </section>
 
 <section id="contact">
@@ -505,7 +533,7 @@ footer{border-top:1px solid var(--borde);padding:1.5rem;text-align:center;font-f
     <p class="contact-intro">Si tienes un proceso contable o financiero que te consume tiempo y crees que se puede automatizar, cuentame. Respondo en menos de 48 horas habiles.</p>
     <p class="contact-intro" style="margin-top:-1rem">Tambien puedes escribirme si tienes dudas sobre el Conciliador Automatico o quieres una licencia para multiples empresas.</p>
     <div class="contact-block">
-      <div class="contact-row"><span class="contact-label">Gumroad</span><span class="contact-val"><a href="https://jordana78.gumroad.com" target="_blank" rel="noopener noreferrer">jordana78.gumroad.com</a></span></div>
+      <div class="contact-row"><span class="contact-label">Gumroad</span><span class="contact-val"><a href="https://ambilorlab.gumroad.com" target="_blank" rel="noopener noreferrer">ambilorlab.gumroad.com</a></span></div>
       <div class="contact-row"><span class="contact-label">Ubicacion</span><span class="contact-val">Santiago, Chile</span></div>
       <div class="contact-row"><span class="contact-label">Idioma</span><span class="contact-val">Espanol</span></div>
     </div>
