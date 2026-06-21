@@ -225,6 +225,38 @@ footer{border-top:1px solid var(--borde);padding:1.5rem;text-align:center;font-f
 .ml-ptrack{height:3px;background:#ebebeb;border-radius:2px;margin-top:10px;overflow:hidden;width:100%;max-width:460px}
 .ml-pfill{height:100%;background:var(--azul);width:0%;border-radius:2px}
 
+/* AppWeb mockup (demo V2) */
+.aw-frame{border:1px solid #dadce0;border-radius:8px;overflow:hidden;max-width:460px;width:100%;background:#fff;position:relative}
+.aw-bar{display:flex;align-items:center;gap:8px;padding:7px 11px;background:#f1f3f4;border-bottom:1px solid #e3e3e3}
+.aw-dots{display:flex;gap:5px;flex-shrink:0}
+.aw-dot{width:8px;height:8px;border-radius:50%}
+.aw-dot.r{background:#ff5f57}.aw-dot.y{background:#febc2e}.aw-dot.g{background:#28c840}
+.aw-url{flex:1;background:#fff;border:1px solid #e3e3e3;border-radius:5px;padding:4px 10px;font-size:9.5px;color:#5f6368;font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aw-body{padding:13px 14px 16px}
+.aw-kpis{display:flex;gap:7px;margin-bottom:11px}
+.aw-kpi{flex:1;border:1px solid #ececec;border-radius:6px;padding:7px 8px;text-align:center}
+.aw-kpin{font-size:16px;font-weight:600;color:#0a0a0a;font-family:var(--mono);display:block;line-height:1.1}
+.aw-kpil{font-size:8.5px;color:#999;margin-top:2px}
+.aw-filters{display:flex;gap:5px;margin-bottom:9px;flex-wrap:wrap}
+.aw-filter{font-size:9px;color:#555;background:#f5f5f5;border:1px solid #e5e5e5;border-radius:100px;padding:3px 9px}
+.aw-filter.active{background:var(--azul-bg);color:var(--azul);border-color:var(--azul);font-weight:500}
+.aw-table{border:1px solid #ececec;border-radius:6px;overflow:hidden}
+.aw-row{display:grid;grid-template-columns:18px 1fr 1fr 64px 60px;gap:6px;align-items:center;padding:6px 9px;font-size:9.5px;border-bottom:1px solid #f2f2f2;transition:background .25s}
+.aw-row:last-child{border-bottom:none}
+.aw-row.sel{background:#f0f4ff}
+.aw-chk{width:11px;height:11px;border:1.5px solid #ccc;border-radius:3px;display:inline-block;position:relative;transition:background .15s,border-color .15s}
+.aw-chk.on{background:var(--azul);border-color:var(--azul)}
+.aw-chk.on::after{content:'';position:absolute;left:2.5px;top:-.5px;width:3px;height:6px;border:solid #fff;border-width:0 1.5px 1.5px 0;transform:rotate(45deg)}
+.aw-amt{text-align:right;font-variant-numeric:tabular-nums;color:#333}
+.aw-tag{font-size:8px;padding:1.5px 6px;border-radius:100px;text-align:center;white-space:nowrap}
+.aw-tag.pend{background:#fff3cd;color:#856404}
+.aw-tag.ok{background:#d4edda;color:#155724}
+.aw-undo{font-size:8px;color:var(--azul);text-decoration:underline;cursor:pointer;opacity:0;transition:opacity .2s}
+.aw-undo.show{opacity:1}
+.aw-selbox{position:absolute;left:50%;bottom:14px;transform:translateX(-50%) translateY(16px);background:#1a1a2e;color:#fff;border-radius:9px;padding:8px 14px;display:flex;align-items:center;gap:12px;font-size:10.5px;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;transition:opacity .3s,transform .3s;white-space:nowrap;z-index:30}
+.aw-selbox.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.aw-selbtn{background:var(--azul);color:#fff;border:none;border-radius:5px;padding:4px 10px;font-size:9.5px;font-weight:500}
+
 .deco{position:absolute;right:0;top:0;bottom:48px;width:140px;pointer-events:none;overflow:hidden}
 .deco-line{position:absolute;right:26px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent 0%,#ebebeb 20%,#ebebeb 80%,transparent 100%)}
 .deco-num{position:absolute;right:34px;font-size:90px;font-weight:700;color:#f5f5f5;letter-spacing:-.05em;line-height:1;bottom:24px}
@@ -246,6 +278,7 @@ footer{border-top:1px solid var(--borde);padding:1.5rem;text-align:center;font-f
 }
 </style>
 </head>
+
 <body>
 
 
@@ -511,13 +544,128 @@ footer{border-top:1px solid var(--borde);padding:1.5rem;text-align:center;font-f
     <div class="v2-teaser">
       <div class="v2-badge"><span class="dot"></span>Proximamente</div>
       <h2 class="v2-h">Conciliador Automatico V2 — ahora con AppWeb</h2>
-      <p class="v2-sub">La siguiente version deja el menu dentro de Google Sheets y pasa a tener su propia aplicacion web conectada a tu planilla. Ya esta en construccion y gran parte del motor esta funcionando — esto es lo que trae:</p>
-      <div class="v2-features">
-        <div class="v2-feature"><div class="v2-feature-label">AppWeb propia</div><p>Se abre como una aplicacion con su propia interfaz, en vez de un menu dentro de la planilla. Lee tu Google Sheets sin modificarlo y guarda los resultados aparte.</p></div>
-        <div class="v2-feature"><div class="v2-feature-label">Conciliacion 1:N y N:1</div><p>Ademas del cruce uno a uno, ahora puede emparejar una factura contra varios pagos parciales, o varios cargos contra un solo pago.</p></div>
-        <div class="v2-feature"><div class="v2-feature-label">Deteccion automatica de columnas</div><p>Reconoce tus columnas por nombre y por contenido, reduciendo la configuracion manual que pedia la V1.</p></div>
-        <div class="v2-feature"><div class="v2-feature-label">Calce manual con deshacer</div><p>Si algo no se empareja solo, lo puedes emparejar tu mismo desde la interfaz — y deshacerlo con un clic si te equivocas.</p></div>
+      <p class="v2-sub">La siguiente version deja el menu dentro de Google Sheets y pasa a tener su propia aplicacion web conectada a tu planilla. Ya esta en construccion y gran parte del motor esta funcionando:</p>
+
+      <div class="demo-section">
+        <div class="demo-label">Ver en accion</div>
+        <div class="demo-wrap" id="demo2">
+          <div class="deco"><div class="deco-line"></div><div class="deco-num" id="dn2">01</div></div>
+
+          <div class="dscene active" id="v2s0">
+            <div class="d-pill anim"><div class="d-dot">!</div><span class="d-pilltxt">Por que una V2</span></div>
+            <div class="d-h anim">No todo se paga<br><em>en un solo movimiento.</em></div>
+            <div class="d-sub anim">Anticipos, pagos parciales, notas de credito. V1 concilia 1 a 1. V2 entiende el grupo completo.</div>
+            <div class="d-stats anim">
+              <div class="d-stat"><span class="d-statn">1:1</span><div class="d-statl">lo que ya hace V1</div></div>
+              <div class="d-stat"><span class="d-statn">1:N · N:1</span><div class="d-statl">lo nuevo en V2</div></div>
+              <div class="d-stat"><span class="d-statn">AppWeb</span><div class="d-statl">interfaz propia</div></div>
+            </div>
+          </div>
+
+          <div class="dscene" id="v2s1">
+            <div class="d-pill anim"><div class="d-dot">1</div><span class="d-pilltxt">Tu propia URL</span></div>
+            <div class="d-h anim">Se abre como una app,<br>no como un <em>menu</em></div>
+            <div class="d-sub anim">Cada usuario despliega su propia AppWeb con su URL. Corre con tu cuenta de Google, no con la mia.</div>
+            <div class="aw-frame anim">
+              <div class="aw-bar">
+                <div class="aw-dots"><div class="aw-dot r"></div><div class="aw-dot y"></div><div class="aw-dot g"></div></div>
+                <div class="aw-url">script.google.com/macros/s/AKfycb.../exec</div>
+              </div>
+              <div class="aw-body">
+                <div class="aw-kpis">
+                  <div class="aw-kpi"><span class="aw-kpin">184</span><div class="aw-kpil">total</div></div>
+                  <div class="aw-kpi"><span class="aw-kpin">42</span><div class="aw-kpil">visibles</div></div>
+                  <div class="aw-kpi"><span class="aw-kpin">$4,2M</span><div class="aw-kpil">suma filtro</div></div>
+                </div>
+                <div class="aw-filters">
+                  <span class="aw-filter">Responsable: Todos</span>
+                  <span class="aw-filter active">Estado: Pendiente</span>
+                  <span class="aw-filter">Buscar...</span>
+                </div>
+                <div class="aw-table">
+                  <div class="aw-row"><span class="aw-chk"></span><span>Factura 4821</span><span>Prov. Sur</span><span class="aw-amt">+850.000</span><span class="aw-tag pend">Pendiente</span></div>
+                  <div class="aw-row"><span class="aw-chk"></span><span>Anticipo 4821-A</span><span>Prov. Sur</span><span class="aw-amt">-300.000</span><span class="aw-tag pend">Pendiente</span></div>
+                  <div class="aw-row"><span class="aw-chk"></span><span>Pago 4821-B</span><span>Prov. Sur</span><span class="aw-amt">-550.000</span><span class="aw-tag pend">Pendiente</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dscene" id="v2s2">
+            <div class="d-pill anim"><div class="d-dot">2</div><span class="d-pilltxt">Mas alla del 1 a 1</span></div>
+            <div class="d-h anim">Una factura,<br><em>varios pagos parciales</em></div>
+            <div class="d-sub anim">El motor arma el grupo completo y te muestra el total cuadrado, no solo pares sueltos.</div>
+            <div class="d-resw anim">
+              <table class="d-res">
+                <thead><tr><th>Grupo</th><th>Estado</th><th>Concepto</th><th>Responsable</th><th style="text-align:right">Monto</th></tr></thead>
+                <tbody id="v2tbody"></tbody>
+              </table>
+            </div>
+            <div class="d-summary" id="v2summary">
+              <div class="d-sitm"><div class="dot g"></div>1 grupo conciliado (1:N)</div>
+              <div class="d-sitm"><div class="dot y"></div>1 movimiento pendiente</div>
+            </div>
+          </div>
+
+          <div class="dscene" id="v2s3">
+            <div class="d-pill anim"><div class="d-dot">3</div><span class="d-pilltxt">Cuando el sistema no esta seguro</span></div>
+            <div class="d-h anim">Selecciona, concilia,<br><em>deshace si te equivocas</em></div>
+            <div class="d-sub anim">Marca las filas que correspondan entre si. La caja flotante suma el total al instante.</div>
+            <div class="aw-frame anim">
+              <div class="aw-bar">
+                <div class="aw-dots"><div class="aw-dot r"></div><div class="aw-dot y"></div><div class="aw-dot g"></div></div>
+                <div class="aw-url">script.google.com/macros/s/AKfycb.../exec</div>
+              </div>
+              <div class="aw-body" style="padding-bottom:34px">
+                <div class="aw-table">
+                  <div class="aw-row" id="v2r0"><span class="aw-chk" id="v2c0"></span><span>Honorario 220</span><span>J. Soto</span><span class="aw-amt">+420.000</span><span class="aw-tag pend" id="v2t0">Pendiente</span></div>
+                  <div class="aw-row" id="v2r1"><span class="aw-chk" id="v2c1"></span><span>Pago hon. 220</span><span>J. Soto</span><span class="aw-amt">-420.000</span><span class="aw-tag pend" id="v2t1">Pendiente</span></div>
+                  <div class="aw-row"><span class="aw-chk"></span><span>Arriendo Junio</span><span>Inmob. Centro</span><span class="aw-amt">+680.000</span><span class="aw-tag pend">Pendiente</span></div>
+                </div>
+              </div>
+              <div class="aw-selbox" id="v2selbox">
+                <span id="v2selcount">2 seleccionados · $840.000</span>
+                <button class="aw-selbtn">Conciliar seleccion</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="dscene" id="v2s4">
+            <div class="d-pill anim"><div class="d-dot">4</div><span class="d-pilltxt">Menos configuracion manual</span></div>
+            <div class="d-h anim">Reconoce tus columnas<br><em>por nombre y contenido</em></div>
+            <div class="d-sub anim">Te confirma la deteccion antes de ejecutar — nunca asume en silencio.</div>
+            <div class="d-tblw anim">
+              <table class="d-tbl">
+                <thead><tr><th>Tu encabezado</th><th>Campo detectado</th><th>Confianza</th></tr></thead>
+                <tbody id="v2colbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="dscene" id="v2s5">
+            <div class="d-pill anim"><div class="d-dot">&#10003;</div><span class="d-pilltxt">Proximamente</span></div>
+            <div class="d-h anim">El mismo enfoque simple.<br><em>Mucha mas capacidad.</em></div>
+            <div class="d-sub anim">Sigo afinando el motor antes de publicarlo. Mismo nivel de privacidad de V1: todo corre en tu propia cuenta de Google.</div>
+            <div class="d-stats anim">
+              <div class="d-stat"><span class="d-statn">1:1→1:N</span><div class="d-statl">tipos de conciliacion</div></div>
+              <div class="d-stat"><span class="d-statn">AppWeb</span><div class="d-statl">interfaz propia</div></div>
+              <div class="d-stat"><span class="d-statn">100%</span><div class="d-statl">privado, como V1</div></div>
+            </div>
+          </div>
+
+          <div class="dprog" id="dprog2"></div>
+          <div class="dctrl">
+            <div class="dctrl-left">
+              <button class="dcbtn" onclick="dnav2(-1)">&#8592;</button>
+              <div class="dcdots" id="ddots2"></div>
+              <button class="dcbtn" id="dppbtn2" onclick="dtogglePlay2()">&#9646;&#9646;</button>
+              <button class="dcbtn" onclick="dnav2(1)">&#8594;</button>
+            </div>
+            <span class="dctr" id="dctr2">1 de 6</span>
+          </div>
+        </div>
       </div>
+
       <div class="v2-cta-row">
         <button class="cta-home" onclick="show('contact')">Avisarme cuando este listo</button>
         <span class="v2-cta-text">Sin fecha de lanzamiento aun — sigo afinando el motor antes de publicarlo.</span>
@@ -893,6 +1041,159 @@ function dtogglePlay(){
 dbuildDots();
 dstartBar();
 show('home');
+
+// ===== DEMO V2 — 6 ESCENAS =====
+var dN2=6,dcur2=0,dplaying2=true,draf2=null,dpbStart2=null,dDUR2=5200;
+var dNUMS2=['01','02','03','04','05','06'];
+var v2Timers=[];
+function clearV2Timers(){v2Timers.forEach(clearTimeout);v2Timers=[];}
+
+// ---- Escena 2: grupo 1:N conciliado ----
+var V2_RES_ROWS=[
+  {grp:'G00012',st:'ok',c:'Factura 4821',r:'Proveedor Sur',a:'+850.000',sign:'pos'},
+  {grp:'G00012',st:'ok',c:'Anticipo 4821-A',r:'Proveedor Sur',a:'-300.000',sign:'neg'},
+  {grp:'G00012',st:'ok',c:'Pago 4821-B',r:'Proveedor Sur',a:'-550.000',sign:'neg'},
+  {grp:'-',st:'pend',c:'Arriendo Junio',r:'Inmobiliaria Centro',a:'+680.000',sign:'pos'}
+];
+function v2ResRowHTML(r){
+  return '<td class="grp">'+r.grp+'</td>'+
+    '<td>'+(r.st==='ok'?'<span class="d-ok">Conciliado</span>':'<span class="d-pend">Pendiente</span>')+'</td>'+
+    '<td>'+r.c+'</td><td>'+r.r+'</td>'+
+    '<td class="amt '+r.sign+'">'+r.a+'</td>';
+}
+function playV2Res(){
+  clearV2Timers();
+  var tbody=document.getElementById('v2tbody');
+  var summary=document.getElementById('v2summary');
+  if(!tbody) return;
+  tbody.innerHTML='';
+  summary.classList.remove('show');
+  V2_RES_ROWS.forEach(function(r,i){
+    var tr=document.createElement('tr');
+    tr.className=r.st==='ok'?'rc':'rp';
+    tr.id='v2tr'+i;
+    tr.innerHTML=v2ResRowHTML(r);
+    tbody.appendChild(tr);
+  });
+  V2_RES_ROWS.forEach(function(r,i){
+    v2Timers.push(setTimeout(function(){
+      var tr=document.getElementById('v2tr'+i);
+      if(!tr)return;
+      tr.classList.add('show');
+      if(r.st==='ok'){
+        tr.classList.add('flash');
+        v2Timers.push(setTimeout(function(){tr.classList.remove('flash');},350));
+      }
+    },300+i*260));
+  });
+  var totalDelay=300+V2_RES_ROWS.length*260+300;
+  v2Timers.push(setTimeout(function(){summary.classList.add('show');},totalDelay));
+}
+
+// ---- Escena 3: seleccion + caja flotante + deshacer ----
+function runV2Selection(){
+  clearV2Timers();
+  var c0=document.getElementById('v2c0'), c1=document.getElementById('v2c1');
+  var r0=document.getElementById('v2r0'), r1=document.getElementById('v2r1');
+  var t0=document.getElementById('v2t0'), t1=document.getElementById('v2t1');
+  var selbox=document.getElementById('v2selbox');
+  if(!c0) return;
+
+  c0.className='aw-chk';c1.className='aw-chk';
+  r0.classList.remove('sel');r1.classList.remove('sel');
+  selbox.classList.remove('show');
+  t0.className='aw-tag pend';t0.textContent='Pendiente';
+  t1.className='aw-tag pend';t1.textContent='Pendiente';
+
+  v2Timers.push(setTimeout(function(){
+    c0.className='aw-chk on';r0.classList.add('sel');
+    v2Timers.push(setTimeout(function(){
+      c1.className='aw-chk on';r1.classList.add('sel');
+      v2Timers.push(setTimeout(function(){
+        selbox.classList.add('show');
+        v2Timers.push(setTimeout(function(){
+          t0.className='aw-tag ok';t0.textContent='Conciliado';
+          t1.className='aw-tag ok';t1.textContent='Conciliado';
+          selbox.classList.remove('show');
+        },1500));
+      },350));
+    },450));
+  },500));
+}
+
+// ---- Escena 4: deteccion de columnas ----
+var V2_COLS=[
+  {h:'Fecha Emision', f:'FECHA', conf:'Alta'},
+  {h:'Monto Neto', f:'MONTO', conf:'Alta'},
+  {h:'Glosa', f:'CONCEPTO', conf:'Media'},
+  {h:'Ejecutivo', f:'RESPONSABLE', conf:'Media'}
+];
+function buildV2Cols(){
+  var tbody=document.getElementById('v2colbody');
+  if(!tbody) return;
+  tbody.innerHTML='';
+  V2_COLS.forEach(function(c,i){
+    var tr=document.createElement('tr');
+    tr.style.opacity='0';
+    tr.style.transition='opacity .35s ease';
+    tr.innerHTML='<td>'+c.h+'</td><td style="font-weight:600;color:var(--azul)">'+c.f+'</td><td style="color:'+(c.conf==='Alta'?'#0f9d58':'#d97706')+';font-weight:500">'+c.conf+'</td>';
+    tbody.appendChild(tr);
+    v2Timers.push(setTimeout(function(){tr.style.opacity='1';},250+i*220));
+  });
+}
+
+// ---- Navegacion principal demo V2 ----
+function v2goTo(i){
+  document.getElementById('v2s'+dcur2).classList.remove('active');
+  clearV2Timers();
+  dcur2=i;
+  var sc=document.getElementById('v2s'+dcur2);
+  sc.classList.add('active');
+  sc.querySelectorAll('.anim').forEach(function(el){
+    el.style.animation='none';el.offsetHeight;el.style.animation='';
+  });
+  document.getElementById('dn2').textContent=dNUMS2[i];
+  document.getElementById('dctr2').textContent=(i+1)+' de 6';
+  v2buildDots();
+  if(i===2) setTimeout(playV2Res,250);
+  if(i===3) setTimeout(runV2Selection,300);
+  if(i===4) setTimeout(buildV2Cols,250);
+  if(dplaying2) v2startBar();
+}
+function dnav2(d){v2stopBar();v2goTo((dcur2+d+dN2)%dN2);}
+function v2buildDots(){
+  var c=document.getElementById('ddots2');c.innerHTML='';
+  for(var i=0;i<dN2;i++){
+    var dd=document.createElement('div');
+    dd.className='dcdot'+(i===dcur2?' on':'');
+    (function(idx){dd.onclick=function(){v2stopBar();v2goTo(idx);};})(i);
+    c.appendChild(dd);
+  }
+}
+function v2startBar(){
+  v2stopBar();dpbStart2=Date.now();
+  var b=document.getElementById('dprog2');b.style.width='0%';
+  function tick(){
+    var pct=Math.min(100,(Date.now()-dpbStart2)/dDUR2*100);
+    b.style.width=pct+'%';
+    if(pct>=100){draf2=null;v2goTo((dcur2+1)%dN2);}
+    else draf2=requestAnimationFrame(tick);
+  }
+  draf2=requestAnimationFrame(tick);
+}
+function v2stopBar(){
+  if(draf2){cancelAnimationFrame(draf2);draf2=null;}
+  var b=document.getElementById('dprog2');
+  if(b) b.style.width='0%';
+}
+function dtogglePlay2(){
+  dplaying2=!dplaying2;
+  var b=document.getElementById('dppbtn2');
+  if(dplaying2){b.innerHTML='&#9646;&#9646;';v2startBar();}
+  else{b.innerHTML='&#9654;';v2stopBar();}
+}
+v2buildDots();
+v2startBar();
 </script>
 </body>
 </html>
